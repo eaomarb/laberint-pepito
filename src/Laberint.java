@@ -1,7 +1,7 @@
 import java.util.Scanner;
 
-public class Laberint {
-    public static void movimentPepito(String[][] matriu, String caracter, int[] pepito) {
+public class Laberint1 {
+    public static boolean movimentPepito(String[][] matriu, String caracter, int[] pepito) {
         for (int i = 0; i < matriu.length; i++) {
             System.out.println();
             for (int j = 0; j < matriu[i].length; j++) {
@@ -39,6 +39,7 @@ public class Laberint {
                 matriu[pepito[0]][pepito[1]] = "P";
             } else if (matriu[pepito[0] - 1][pepito[1]].equals("S")) {
                 System.out.print("Enhorabona has superat el laberint!");
+                return false;
             } else {
                 System.out.print("Pepito no pot anar a la dreta");
             }
@@ -50,8 +51,6 @@ public class Laberint {
                 matriu[pepito[0]][pepito[1]] = "P";
             } else if (matriu[pepito[0] - 1][pepito[1]].equals("S")) {
                 System.out.print("Enhorabona has superat el laberint!");
-                estatPartida = true;
-                continuaJoc = false;
             } else {
                 System.out.print("Pepito no pot baixar");
             }
@@ -60,10 +59,11 @@ public class Laberint {
         else if (caracter.equalsIgnoreCase("Q")) {
 
             System.out.print("Sortint");
-            continuaJoc = false;
+            return false;
         } else {
             System.out.print("ERROR: no has introduït cap comandament");
         }
+        return true;
     }
 
     // Usarem aquesta funció per a poder esbrinar
@@ -75,26 +75,26 @@ public class Laberint {
         // assignarem a cada posició un número cada cop més elevat
         // com més allunyat estigui de la coordenada 0,0
         int [] pepito = new int[2];
-        int[] contadorCoordenades = new int[matriu.length * matriu[0].length];
+        int[][] contadorCoordenades = new int[matriu.length][matriu[0].length];
         int[] eixX = new int[matriu.length];
         int[] eixY = new int[matriu[0].length];
         for (int i = 0; i < matriu.length; i++) {
             for (int j = 0; j < matriu[0].length; j++) {
                 // Fem un if per a evitar que la coordenada 0 ens doni problemes
                 if (i * j != 0) {
-                    contadorCoordenades[i * j] = contadorCoordenades[i * j - 1] + 1;
+                    contadorCoordenades[i][j] = contadorCoordenades[i][j] +1;
                 } else {
-                    contadorCoordenades[0] = 0;
+                    contadorCoordenades[0][0] = 0;
                 }
             }
         }
         // Triem el nombre més petit que no sigui paret
-        int auxiliar = contadorCoordenades[matriu.length * matriu[0].length];
+        int auxiliar = contadorCoordenades[matriu.length-1][matriu[0].length-1];
         for (int i = 0; i < matriu.length; i++) {
             for (int j = 0; j < matriu[0].length; j++) {
-                if (contadorCoordenades[i * j] < auxiliar && contadorCoordenades[i * j] != 0
+                if (contadorCoordenades[i][j] < auxiliar && contadorCoordenades[i][j] != 0
                         && !(matriu[i][j].equals("M"))) {
-                    auxiliar = contadorCoordenades[i * j];
+                    auxiliar = contadorCoordenades[i][j];
                     pepito[0] = i;
                     pepito[1] = j;
                 }
@@ -103,24 +103,25 @@ public class Laberint {
         return pepito;
     }
 
-    public static void joc(String[] args) {
+    public static boolean joc(String[] args) {
         // TODO Auto-generated method stub
         Scanner teclat = new Scanner(System.in);
-        boolean continuarJoc = true;
         boolean estatPartida = true;
-        String caracter;
+        String caracter = "M";
         int[] pepito = {0, 0};
         int contadorMoviments = 0;
         String[][] mapa = null;
         // Fem un bucle per a poder jugar, en el qual
         // es cridarà la funció moviment per a moure Pepito
-        while (continuarJoc) {
+        while (estatPartida) {
             System.out.println("Escapa Pepito");
-            System.out.print(" W - Pujar A - Esquerra S - Baixar D - Dreta");
+            System.out.print(" W - Pujar A - Esquerra S - Baixar D - Dreta Q- sortir");
             caracter = teclat.next();
-            movimentPepito(mapa, caracter, pepito, continuarJoc, estatPartida);
+            estatPartida = movimentPepito(mapa, caracter, pepito);
             contadorMoviments++;
         }
+        return estatPartida;
+        
 
     }
 
@@ -199,7 +200,7 @@ public class Laberint {
                     }
                 }
                 System.out.println();
-                movimentPepito(mapa, );
+                
             } else if (menu == 3) {
                 System.out.println("Has sortit del joc!");
             }
